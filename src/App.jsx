@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./styles.css";
 import { InputTodo } from "./components/InputTodo";
+import { ErrorMessage } from "./components/ErrorMessage";
 import { IncompleteTodos } from "./components/IncompleteTodos";
 import { CompleteTodos } from "./components/CompleteTodos";
 
@@ -8,6 +9,7 @@ export const App = () => {
   const [todoText, setTodoText] = useState("");
   const [incompleteTodos, setIncompleteTodos] = useState([]);
   const [completeTodos, setCompleteTodos] = useState([]);
+  const [isError, setIsError] = useState(false);
 
   const onCahngeTodoText = (event) => setTodoText(event.target.value);
 
@@ -43,22 +45,25 @@ export const App = () => {
     setCompleteTodos(newCompleteTodos);
   };
 
+  useEffect(() => {
+    setIsError(incompleteTodos.length >= 5);
+  }, [incompleteTodos]);
+
   return (
-    <>
+    <div>
       <InputTodo
         todoText={todoText}
         onChange={onCahngeTodoText}
         onClickAdd={onClickAdd}
+        isError={isError}
       />
+      {isError && <ErrorMessage />}
       <IncompleteTodos
         todos={incompleteTodos}
         onClickComplete={onClickComplete}
         onClickDelete={onClickDelete}
       />
-      <CompleteTodos 
-        todos={completeTodos}
-        onClickBack={onClickBack}
-      />
-    </>
+      <CompleteTodos todos={completeTodos} onClickBack={onClickBack} />
+    </div>
   );
 };
